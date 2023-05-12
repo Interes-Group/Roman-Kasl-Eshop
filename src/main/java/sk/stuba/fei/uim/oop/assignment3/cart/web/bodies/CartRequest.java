@@ -3,7 +3,7 @@ package sk.stuba.fei.uim.oop.assignment3.cart.web.bodies;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import sk.stuba.fei.uim.oop.assignment3.cart.data.CartEmpty;
+import sk.stuba.fei.uim.oop.assignment3.cart.data.CartElement;
 
 @Getter
 @Setter
@@ -14,8 +14,8 @@ public class CartRequest {
 
     private Integer amount;
 
-    public CartRequest(CartEmpty cartEmpty) {
-        this.productId = cartEmpty.getProduct().getId();
-        this.amount = cartEmpty.getAmount();
+    public CartRequest(CartElement cartElement) {
+        this.productId = cartElement.getProduct().getId();
+        this.amount = cartElement.getAmount();
     }
 }

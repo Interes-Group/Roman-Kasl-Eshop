@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-public class CartEmpty {
+public class CartElement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,11 +19,11 @@ public class CartEmpty {
 
     private Integer amount;
 
-    public CartEmpty() {
+    public CartElement() {
 
     }
 
-    public CartEmpty(Product product, Integer amount) {
+    public CartElement(Product product, Integer amount) {
         this.product = product;
         this.amount = amount;
     }

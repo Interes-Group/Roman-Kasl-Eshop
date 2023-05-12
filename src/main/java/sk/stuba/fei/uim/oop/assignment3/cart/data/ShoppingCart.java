@@ -15,7 +15,7 @@ public class ShoppingCart {
     private Long id;
 
     @OneToMany(orphanRemoval = true)
-    private List<CartEmpty> shoppingList;
+    private List<CartElement> shoppingList;
 
     private boolean payed;
 

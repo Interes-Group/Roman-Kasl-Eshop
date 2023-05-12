@@ -1,17 +1,17 @@
 package sk.stuba.fei.uim.oop.assignment3.cart.logic;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sk.stuba.fei.uim.oop.assignment3.cart.data.CartEmpty;
+import sk.stuba.fei.uim.oop.assignment3.cart.data.CartElement;
+import sk.stuba.fei.uim.oop.assignment3.cart.data.CartElementRepository;
 import sk.stuba.fei.uim.oop.assignment3.cart.data.ShoppingCart;
 import sk.stuba.fei.uim.oop.assignment3.cart.data.ShoppingCartRepository;
 import sk.stuba.fei.uim.oop.assignment3.cart.web.bodies.CartRequest;
 import sk.stuba.fei.uim.oop.assignment3.exception.IllegalOperationException;
 import sk.stuba.fei.uim.oop.assignment3.exception.NotFoundException;
 import sk.stuba.fei.uim.oop.assignment3.product.logic.IProductService;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ShoppingCartService implements IShoppingCartService {
@@ -23,7 +23,7 @@ public class ShoppingCartService implements IShoppingCartService {
     private IProductService productService;
 
     @Autowired
-    private ICartEmptyService cartEntryService;
+    CartElementRepository cartEntryRepository;
 
     @Override
     public ShoppingCart create() {
@@ -49,19 +49,19 @@ public class ShoppingCartService implements IShoppingCartService {
         ShoppingCart cart = this.getUnpaid(id);
         this.productService.removeAmount(body.getProductId(), body.getAmount());
 
-        Optional<CartEmpty> existingEntry = cart.getShoppingList()
+        Optional<CartElement> existingEntry = cart.getShoppingList()
                 .stream()
                 .filter(entry -> entry.getProduct().getId() == body.getProductId())
                 .findFirst();
 
         if (existingEntry.isPresent()) {
             existingEntry.get().setAmount(existingEntry.get().getAmount() + body.getAmount());
-            cartEntryService.save(existingEntry.get());
+            this.cartEntryRepository.save(existingEntry.get());
         } else {
-            CartEmpty cartEmpty = cartEntryService.create();
-            cartEmpty.setAmount(body.getAmount());
-            cartEmpty.setProduct(productService.getById(body.getProductId()));
-            cart.getShoppingList().add(cartEntryService.save(cartEmpty));
+            CartElement cartEntry = cartEntryRepository.save(new CartElement());
+            cartEntry.setAmount(body.getAmount());
+            cartEntry.setProduct(productService.getById(body.getProductId()));
+            cart.getShoppingList().add(cartEntryRepository.save(cartEntry));
         }
 
         return this.repository.save(cart);
@@ -84,6 +84,4 @@ public class ShoppingCartService implements IShoppingCartService {
         }
         return cart;
     }
-
-
 }
