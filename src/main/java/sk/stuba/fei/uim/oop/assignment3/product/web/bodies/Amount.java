@@ -9,5 +9,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Amount {
-    private int amount;
+    private Integer amount;
 }

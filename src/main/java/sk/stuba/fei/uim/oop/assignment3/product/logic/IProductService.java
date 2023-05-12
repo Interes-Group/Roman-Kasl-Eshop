@@ -1,4 +1,5 @@
 package sk.stuba.fei.uim.oop.assignment3.product.logic;
+import sk.stuba.fei.uim.oop.assignment3.exception.IllegalOperationException;
 import sk.stuba.fei.uim.oop.assignment3.product.data.Product;
 import sk.stuba.fei.uim.oop.assignment3.product.web.bodies.ProductRequest;
 import sk.stuba.fei.uim.oop.assignment3.exception.NotFoundException;
@@ -18,5 +19,6 @@ public interface IProductService {
     int getAmount(long id) throws NotFoundException;
 
     int addAmount(long id, int increment) throws NotFoundException;
+    void removeAmount(long id, long decrement) throws NotFoundException, IllegalOperationException;
 
 }
