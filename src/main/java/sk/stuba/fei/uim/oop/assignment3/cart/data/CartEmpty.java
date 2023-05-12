@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-public class CartEntry  {
+public class CartEmpty {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,13 +17,13 @@ public class CartEntry  {
     @ManyToOne
     private Product product;
 
-    private Long amount;
+    private Integer amount;
 
-    public CartEntry() {
+    public CartEmpty() {
 
     }
 
-    public CartEntry(Product product, Long amount) {
+    public CartEmpty(Product product, Integer amount) {
         this.product = product;
         this.amount = amount;
     }

@@ -2,9 +2,10 @@ package sk.stuba.fei.uim.oop.assignment3.cart.logic;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sk.stuba.fei.uim.oop.assignment3.cart.data.CartEmpty;
 import sk.stuba.fei.uim.oop.assignment3.cart.data.ShoppingCart;
 import sk.stuba.fei.uim.oop.assignment3.cart.data.ShoppingCartRepository;
-import sk.stuba.fei.uim.oop.assignment3.cart.web.bodies.CartEntry;
+import sk.stuba.fei.uim.oop.assignment3.cart.web.bodies.CartRequest;
 import sk.stuba.fei.uim.oop.assignment3.exception.IllegalOperationException;
 import sk.stuba.fei.uim.oop.assignment3.exception.NotFoundException;
 import sk.stuba.fei.uim.oop.assignment3.product.logic.IProductService;
@@ -22,7 +23,7 @@ public class ShoppingCartService implements IShoppingCartService {
     private IProductService productService;
 
     @Autowired
-    private ICartEntryService cartEntryService;
+    private ICartEmptyService cartEntryService;
 
     @Override
     public ShoppingCart create() {
@@ -44,11 +45,11 @@ public class ShoppingCartService implements IShoppingCartService {
     }
 
     @Override
-    public ShoppingCart addToCart(long id, CartEntry body) throws NotFoundException, IllegalOperationException {
+    public ShoppingCart addProduct(long id, CartRequest body) throws NotFoundException, IllegalOperationException {
         ShoppingCart cart = this.getUnpaid(id);
         this.productService.removeAmount(body.getProductId(), body.getAmount());
 
-        Optional<sk.stuba.fei.uim.oop.assignment3.cart.data.CartEntry> existingEntry = cart.getShoppingList()
+        Optional<CartEmpty> existingEntry = cart.getShoppingList()
                 .stream()
                 .filter(entry -> entry.getProduct().getId() == body.getProductId())
                 .findFirst();
@@ -57,10 +58,10 @@ public class ShoppingCartService implements IShoppingCartService {
             existingEntry.get().setAmount(existingEntry.get().getAmount() + body.getAmount());
             cartEntryService.save(existingEntry.get());
         } else {
-            sk.stuba.fei.uim.oop.assignment3.cart.data.CartEntry cartEntry = cartEntryService.create();
-            cartEntry.setAmount(body.getAmount());
-            cartEntry.setProduct(productService.getById(body.getProductId()));
-            cart.getShoppingList().add(cartEntryService.save(cartEntry));
+            CartEmpty cartEmpty = cartEntryService.create();
+            cartEmpty.setAmount(body.getAmount());
+            cartEmpty.setProduct(productService.getById(body.getProductId()));
+            cart.getShoppingList().add(cartEntryService.save(cartEmpty));
         }
 
         return this.repository.save(cart);
@@ -68,7 +69,7 @@ public class ShoppingCartService implements IShoppingCartService {
 
 
     @Override
-    public double payForCart(long id) throws NotFoundException, IllegalOperationException {
+    public double payCart(long id) throws NotFoundException, IllegalOperationException {
         ShoppingCart cart = this.getUnpaid(id);
         double sum = cart.getShoppingList().stream().mapToDouble(item -> item.getAmount() * item.getProduct().getPrice()).sum();
         cart.setPayed(true);
@@ -84,12 +85,5 @@ public class ShoppingCartService implements IShoppingCartService {
         return cart;
     }
 
-    private sk.stuba.fei.uim.oop.assignment3.cart.data.CartEntry findCartEntryWithProduct(List<sk.stuba.fei.uim.oop.assignment3.cart.data.CartEntry> entries, long productId) {
-        for (var entry : entries) {
-            if (entry.getProduct().getId().equals(productId)) {
-                return entry;
-            }
-        }
-        return null;
-    }
+
 }

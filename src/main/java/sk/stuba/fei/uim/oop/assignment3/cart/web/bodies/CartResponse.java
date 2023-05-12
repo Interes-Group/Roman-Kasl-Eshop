@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 @Setter
 public class CartResponse {
     private long id;
-    private List<CartEntry> shoppingList;
+    private List<CartRequest> shoppingList;
     private boolean payed;
 
     public CartResponse(ShoppingCart shoppingCart) {
         this.id = shoppingCart.getId();
         this.payed = shoppingCart.isPayed();
-        this.shoppingList = shoppingCart.getShoppingList().stream().map(CartEntry::new).collect(Collectors.toList());
+        this.shoppingList = shoppingCart.getShoppingList().stream().map(CartRequest::new).collect(Collectors.toList());
     }
 }
